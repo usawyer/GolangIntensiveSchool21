@@ -19,9 +19,9 @@ type Cake struct {
 }
 
 type Ingredients struct {
-	IngredientName  string `json:"ingredient_name" xml:"itemname"`
-	IngredientCount string `json:"ingredient_count" xml:"itemcount"`
-	IngredientUnit  string `json:"ingredient_unit" xml:"itemunit"`
+	Name  string `json:"ingredient_name" xml:"itemname"`
+	Count string `json:"ingredient_count" xml:"itemcount"`
+	Unit  string `json:"ingredient_unit" xml:"itemunit"`
 }
 
 func (r *Recipes) PrintXML() {
@@ -66,46 +66,46 @@ func (r *Recipes) Compare(r2 *Recipes) []string {
 			}
 			// added or removed ingredients
 			for _, newIngredient := range newCake.Ingredients {
-				if _, equalIngredient := FindIngredient(&oldCake, newIngredient.IngredientName); !equalIngredient {
+				if _, equalIngredient := FindIngredient(&oldCake, newIngredient.Name); !equalIngredient {
 					str := fmt.Sprintf("ADDED ingredient \"%s\" for cake \"%s\"",
-						newIngredient.IngredientName, newCake.Name)
+						newIngredient.Name, newCake.Name)
 					result = append(result, str)
 				}
 			}
 			for _, oldIngredient := range oldCake.Ingredients {
-				if _, equalIngredient := FindIngredient(newCake, oldIngredient.IngredientName); !equalIngredient {
+				if _, equalIngredient := FindIngredient(newCake, oldIngredient.Name); !equalIngredient {
 					str := fmt.Sprintf("REMOVED ingredient \"%s\" for cake \"%s\"",
-						oldIngredient.IngredientName, oldCake.Name)
+						oldIngredient.Name, oldCake.Name)
 					result = append(result, str)
 				}
 			}
 			// count or unit changed
 			for _, oldIngredient := range oldCake.Ingredients {
-				if newIngredient, equalIngredient := FindIngredient(newCake, oldIngredient.IngredientName); equalIngredient {
-					if newIngredient.IngredientCount != "" && oldIngredient.IngredientCount == "" {
+				if newIngredient, equalIngredient := FindIngredient(newCake, oldIngredient.Name); equalIngredient {
+					if newIngredient.Count != "" && oldIngredient.Count == "" {
 						str := fmt.Sprintf("ADDED unit count \"%s\" for ingredient \"%s\" for cake \"%s\"",
-							newIngredient.IngredientUnit, newIngredient.IngredientName, newCake.Name)
+							newIngredient.Unit, newIngredient.Name, newCake.Name)
 						result = append(result, str)
-					} else if newIngredient.IngredientCount == "" && oldIngredient.IngredientCount != "" {
+					} else if newIngredient.Count == "" && oldIngredient.Count != "" {
 						str := fmt.Sprintf("REMOVED unit count \"%s\" for ingredient \"%s\" for cake \"%s\"",
-							oldIngredient.IngredientCount, newIngredient.IngredientName, newCake.Name)
+							oldIngredient.Count, newIngredient.Name, newCake.Name)
 						result = append(result, str)
-					} else if newIngredient.IngredientCount != oldIngredient.IngredientCount {
+					} else if newIngredient.Count != oldIngredient.Count {
 						str := fmt.Sprintf("CHANGED unit count for ingredient \"%s\" for cake \"%s\" - \"%s\" instead of \"%s\"",
-							newIngredient.IngredientName, newCake.Name, newIngredient.IngredientCount, oldIngredient.IngredientCount)
+							newIngredient.Name, newCake.Name, newIngredient.Count, oldIngredient.Count)
 						result = append(result, str)
 					}
-					if newIngredient.IngredientUnit != "" && oldIngredient.IngredientUnit == "" {
+					if newIngredient.Unit != "" && oldIngredient.Unit == "" {
 						str := fmt.Sprintf("ADDED unit \"%s\" for ingredient \"%s\" for cake \"%s\"",
-							newIngredient.IngredientUnit, newIngredient.IngredientName, newCake.Name)
+							newIngredient.Unit, newIngredient.Name, newCake.Name)
 						result = append(result, str)
-					} else if newIngredient.IngredientUnit == "" && oldIngredient.IngredientUnit != "" {
+					} else if newIngredient.Unit == "" && oldIngredient.Unit != "" {
 						str := fmt.Sprintf("REMOVED unit \"%s\" for ingredient \"%s\" for cake \"%s\"",
-							oldIngredient.IngredientUnit, newIngredient.IngredientName, newCake.Name)
+							oldIngredient.Unit, newIngredient.Name, newCake.Name)
 						result = append(result, str)
-					} else if newIngredient.IngredientUnit != oldIngredient.IngredientUnit {
+					} else if newIngredient.Unit != oldIngredient.Unit {
 						str := fmt.Sprintf("CHANGED unit for ingredient \"%s\" for cake \"%s\" - \"%s\" instead of \"%s\"",
-							newIngredient.IngredientName, newCake.Name, newIngredient.IngredientUnit, oldIngredient.IngredientUnit)
+							newIngredient.Name, newCake.Name, newIngredient.Unit, oldIngredient.Unit)
 						result = append(result, str)
 					}
 				}
@@ -126,7 +126,7 @@ func FindCake(recipes *Recipes, nameToFind string) (*Cake, bool) {
 
 func FindIngredient(cake *Cake, nameToFind string) (*Ingredients, bool) {
 	for _, ingredient := range cake.Ingredients {
-		if ingredient.IngredientName == nameToFind {
+		if ingredient.Name == nameToFind {
 			return &ingredient, true
 		}
 	}
