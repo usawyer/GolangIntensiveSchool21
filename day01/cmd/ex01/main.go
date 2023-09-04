@@ -41,6 +41,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	res, err := oldRecipes.Compare(newRecipes)
-	printResult(res)
+	res := oldRecipes.Compare(newRecipes)
+	if len(res) > 0 {
+		printResult(res)
+	} else {
+		fmt.Println("Both databases - new and old are equal")
+	}
 }
