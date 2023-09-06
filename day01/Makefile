@@ -23,7 +23,7 @@ test_ex01: build_ex01
 	${BUILD}/compareDB --old test/original_database.xml --new test/stolen_database.json
 
 build_ex02:
-	go build -o ${BUILD}/compareDB ${PACKAGE}/cmd/ex01
+	go build -o ${BUILD}/compareFS ${PACKAGE}/cmd/ex02
 
 run_ex02:
 	go run ${PACKAGE}/cmd/ex02
