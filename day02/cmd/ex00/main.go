@@ -36,6 +36,7 @@ func main() {
 	symlinksF := flag.Bool("sl", false, "find symlinks")
 	extensionF := flag.String("ext", "", "find certain extension files")
 	flag.Parse()
+
 	checkFlags(fileF, directoryF, symlinksF, extensionF)
 
 	path := os.Args[len(os.Args)-1]
@@ -49,30 +50,36 @@ func main() {
 
 	err = filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 		if err == nil {
-
-			//if info.Mode()&(1<<2) != 0 {
 			if info.Mode() != 0 {
 				if *symlinksF && info.Mode().Type() == os.ModeSymlink {
-					res = append(res, path)
-				} else if *fileF {
-
+					//fmt.Print(path + "->")
+					if destination, er := filepath.EvalSymlinks(path); er != nil {
+						fmt.Println(path + "->" + "[broken]")
+						//res = append(res, path+"->"+"[broken]")
+					} else {
+						fmt.Println(path + "->" + destination)
+						//res = append(res, path+"->"+destination)
+					}
+				} else if *fileF && info.Mode().IsRegular() {
+					if *extensionF == "" || (*extensionF != "" && filepath.Ext(path) == "."+(*extensionF)) {
+						//res = append(res, path)
+						fmt.Println(path)
+					}
 				} else if *directoryF && info.IsDir() {
-					res = append(res, path)
+					//res = append(res, path)
+					fmt.Println(path)
+
 				}
 			}
-
-			//if !info.IsDir() && filepath.Ext(path) == ".txt" {
-			//	res = append(res, path)
-			//}
 		}
-
 		return nil
 	})
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	//print(res)
-	fmt.Println(len(res))
+
+	print(res)
+	//fmt.Println(len(res))
 
 }
