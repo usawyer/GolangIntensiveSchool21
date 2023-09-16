@@ -7,8 +7,9 @@ build_ex00:
 	go build -o ${BUILD}/myFind ${PACKAGE}/cmd/ex00
 
 run_ex00: build_ex00
-	${BUILD}/myFind -f test/original_database.xml
-# указать путь
+	${BUILD}/myFind -f -ext 'go' internal/domain/
+	${BUILD}/myFind -d .
+	#find . -type d
 
 build_ex01:
 	go build -o ${BUILD}/myWc ${PACKAGE}/cmd/ex01
