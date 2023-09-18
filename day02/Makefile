@@ -1,7 +1,7 @@
 BUILD=${CURDIR}/build
 PACKAGE=cli
 
-all: run_ex00 run_ex01
+all: run_ex00 run_ex01 run_ex02
 
 build_ex00:
 	go build -o ${BUILD}/myFind ${PACKAGE}/cmd/ex00
@@ -29,7 +29,14 @@ run_ex02: build_ex00 build_ex01 build_ex02
 	echo -e "internal/domain/\ncmd/" | xargs ls -la
 	${BUILD}/myFind -f -ext 'go' internal/domain/ | ${BUILD}/myXargs ${BUILD}/myWc -l
 
+build_ex03:
+	go build -o ${BUILD}/myRotate ${PACKAGE}/cmd/ex03
+
+run_ex03: build_ex03
+	${BUILD}/myRotate -a test/ test/input.txt internal/domain/rotate.go
+
 clean:
 	rm -rf ${BUILD}/myFind
 	rm -rf ${BUILD}/myWc
 	rm -rf ${BUILD}/myXargs
+	rm -rf ${BUILD}/myRotate
