@@ -7,20 +7,21 @@ import (
 	"sync"
 )
 
-var wg sync.WaitGroup
-
 func GoCount(files []string, flag rune) {
+	var wg sync.WaitGroup
 	wg.Add(len(files))
 	res := make(map[string]int)
 	for _, filename := range files {
-		go count(res, filename, flag)
+		go func(filename string) {
+			defer wg.Done()
+			count(res, filename, flag)
+		}(filename)
 	}
 	wg.Wait()
 	printRes(res)
 }
 
 func count(res map[string]int, filename string, flag rune) {
-	defer wg.Done()
 	file, err := os.Open(filename)
 	if err != nil {
 		fmt.Println(err)

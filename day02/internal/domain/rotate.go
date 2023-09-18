@@ -3,12 +3,14 @@ package domain
 import (
 	"archive/tar"
 	"compress/gzip"
+	"fmt"
 	"github.com/pkg/errors"
 	"io"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -17,19 +19,23 @@ func ArchiveFiles(files []string, path string) error {
 		return err
 	}
 
-	errs := make(chan error, 1)
+	var wg sync.WaitGroup
+	errs := make(chan error, len(files))
 	wg.Add(len(files))
 	for _, file := range files {
 		go func(file string) {
+			defer wg.Done()
 			errs <- archive(file, path)
 		}(file)
 	}
 	wg.Wait()
 
-	if err := <-errs; err != nil {
-		return err
+	close(errs)
+	for err := range errs {
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
-
 	return nil
 }
 
@@ -47,7 +53,7 @@ func checkDirectory(path string) error {
 }
 
 func archive(filename string, path string) error {
-	defer wg.Done()
+	//defer wg.Done()
 
 	if _, err := os.Stat(filename); err != nil {
 		return errors.Wrap(err, "error writing archive")
