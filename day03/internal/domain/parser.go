@@ -2,6 +2,7 @@ package domain
 
 import (
 	"encoding/csv"
+	"github.com/elastic/go-elasticsearch/v8"
 	"log"
 	"os"
 	"strconv"
@@ -66,4 +67,8 @@ func ParseDataFromCsv(path string) ([]Place, error) {
 	}
 
 	return data, nil
+}
+
+func InsertDataToElastic(es *elasticsearch.Client, data []Place) error {
+	return nil
 }
