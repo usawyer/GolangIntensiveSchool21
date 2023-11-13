@@ -23,10 +23,10 @@ build_ex02:
 	go build -o ${BUILD}/myXargs ${PACKAGE}/cmd/ex02
 
 run_ex02: build_ex00 build_ex01 build_ex02
-	echo 'one two three' | ${BUILD}/myXargs mkdir
+	#echo 'one two three' | ${BUILD}/myXargs mkdir
 	#echo 'one two three' | ${BUILD}/myXargs rm -rf
-	echo -e "internal/domain/\ncmd/" | ${BUILD}/myXargs ls -la
-	echo -e "internal/domain/\ncmd/" | xargs ls -la
+#	echo -e "internal/domain/\ncmd/" | ${BUILD}/myXargs ls -la
+#	echo -e "internal/domain/\ncmd/" | xargs ls -la
 	${BUILD}/myFind -f -ext 'go' internal/domain/ | ${BUILD}/myXargs ${BUILD}/myWc -l
 
 build_ex03:

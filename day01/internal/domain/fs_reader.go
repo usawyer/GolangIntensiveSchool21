@@ -9,21 +9,7 @@ import (
 
 type FSReader map[string]string
 
-//func open(filename string) (*os.File, error) {
-//	file, err := os.Open(filename)
-//	if err != nil {
-//		return nil, errors.Wrap(err, "error opening file")
-//	}
-//	defer file.Close()
-//	return file, nil
-//}
-
 func (fs FSReader) Read(filename string) error {
-	//file, err := open(filename)
-	//if err != nil {
-	//	return err
-	//}
-
 	file, err := os.Open(filename)
 	if err != nil {
 		return errors.Wrap(err, "error opening file")
@@ -32,7 +18,6 @@ func (fs FSReader) Read(filename string) error {
 
 	scan := bufio.NewScanner(file)
 	for scan.Scan() {
-		//fmt.Println(scan.Text())
 		if str := scan.Text(); str != "" {
 			fs[scan.Text()] = "REMOVED"
 		}
@@ -41,11 +26,6 @@ func (fs FSReader) Read(filename string) error {
 }
 
 func (fs FSReader) Compare(filename string) error {
-	//file, err := open(filename)
-	//if err != nil {
-	//	return err
-	//}
-
 	file, err := os.Open(filename)
 	if err != nil {
 		return errors.Wrap(err, "error opening file")
