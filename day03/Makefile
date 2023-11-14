@@ -14,13 +14,12 @@ run_ex00: build_ex00
 	${BUILD}/insert
 	curl -s -XGET "http://localhost:9200/places/_doc/1"
 
+	#curl -XDELETE "http://localhost:9200/places/_doc/1"
+	#curl -XDELETE "http://localhost:9200/places/"
 	#curl -XPUT 'http://localhost:9200/places/place/_mapping?include_type_name=true' -H "Content-Type: application/json" -d @"api/schema.json"
 	#curl -XPUT "${ES_URL}/places/place/_mapping?include_type_name=true" -H "Content-Type: application/json" -d @"${CURDIR}/build/elastic/schema.json"
 
 
 
 clean:
-	rm -rf ${BUILD}/myFind
-	rm -rf ${BUILD}/myWc
-	rm -rf ${BUILD}/myXargs
-	rm -rf ${BUILD}/myRotate
+	rm -rf ${BUILD}/insert

@@ -12,7 +12,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"sync"
 )
 
 type Place struct {
@@ -77,51 +76,33 @@ func ParseDataFromCsv(path string) ([]Place, error) {
 }
 
 func InsertDataToElastic(es *elasticsearch.Client, places []Place) error {
-	var wg sync.WaitGroup
-
-	errs := make(chan error, len(places))
-	wg.Add(len(places))
-
+	var buf bytes.Buffer
 	for _, place := range places {
-		go func(place Place) {
-			defer wg.Done()
-			errs <- IndexPlace(es, place)
-		}(place)
-	}
-	wg.Wait()
-	close(errs)
-
-	for err := range errs {
-		if err != nil {
-			return errors.Wrap(err, "error indexing document: ")
+		action := fmt.Sprintf(`{ "index" : { "_index" : "places", "_id" : "%d" } }%s`, place.ID+1, "\n")
+		if _, err := buf.WriteString(action); err != nil {
+			return errors.Wrap(err, "error writing action: "+strconv.Itoa(place.ID))
 		}
+		if err := json.NewEncoder(&buf).Encode(place); err != nil {
+			return errors.Wrap(err, "error encoding document: "+strconv.Itoa(place.ID))
+		}
+		log.Printf("[ %d place is being processed ]\n", place.ID+1)
 	}
 
-	return nil
-}
-
-func IndexPlace(es *elasticsearch.Client, place Place) error {
-	doc, err := json.Marshal(place)
-	if err != nil {
-		return errors.Wrap(err, "error marshaling document: "+strconv.Itoa(place.ID))
-	}
-
-	req := esapi.IndexRequest{
-		Index:      "places",
-		DocumentID: fmt.Sprintf("%d", place.ID),
-		Body:       bytes.NewReader(doc),
-		Refresh:    "true",
+	req := esapi.BulkRequest{
+		Body:    &buf,
+		Refresh: "true",
 	}
 
 	res, err := req.Do(context.Background(), es)
 	if err != nil {
-		return errors.Wrap(err, "error performing request: "+strconv.Itoa(place.ID))
+		return errors.Wrap(err, "error performing bulk request")
 	}
 	defer res.Body.Close()
 
 	if res.IsError() {
-		return errors.Wrap(err, "error response: "+strconv.Itoa(place.ID))
+		return errors.New("error response for bulk request")
 	}
 
 	return nil
+
 }
