@@ -17,7 +17,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	data, err := domain.ParseDataFromCsv("../../test/data.csv")
+	data, err := domain.ParseDataFromCsv("test/data.csv")
 	if err != nil {
 		log.Fatal(err)
 	}

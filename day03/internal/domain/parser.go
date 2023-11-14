@@ -1,11 +1,18 @@
 package domain
 
 import (
+	"bytes"
+	"context"
 	"encoding/csv"
+	"encoding/json"
+	"fmt"
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/pkg/errors"
 	"log"
 	"os"
 	"strconv"
+	"sync"
 )
 
 type Place struct {
@@ -69,6 +76,52 @@ func ParseDataFromCsv(path string) ([]Place, error) {
 	return data, nil
 }
 
-func InsertDataToElastic(es *elasticsearch.Client, data []Place) error {
+func InsertDataToElastic(es *elasticsearch.Client, places []Place) error {
+	var wg sync.WaitGroup
+
+	errs := make(chan error, len(places))
+	wg.Add(len(places))
+
+	for _, place := range places {
+		go func(place Place) {
+			defer wg.Done()
+			errs <- IndexPlace(es, place)
+		}(place)
+	}
+	wg.Wait()
+	close(errs)
+
+	for err := range errs {
+		if err != nil {
+			return errors.Wrap(err, "error indexing document: ")
+		}
+	}
+
+	return nil
+}
+
+func IndexPlace(es *elasticsearch.Client, place Place) error {
+	doc, err := json.Marshal(place)
+	if err != nil {
+		return errors.Wrap(err, "error marshaling document: "+strconv.Itoa(place.ID))
+	}
+
+	req := esapi.IndexRequest{
+		Index:      "places",
+		DocumentID: fmt.Sprintf("%d", place.ID),
+		Body:       bytes.NewReader(doc),
+		Refresh:    "true",
+	}
+
+	res, err := req.Do(context.Background(), es)
+	if err != nil {
+		return errors.Wrap(err, "error performing request: "+strconv.Itoa(place.ID))
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return errors.Wrap(err, "error response: "+strconv.Itoa(place.ID))
+	}
+
 	return nil
 }
