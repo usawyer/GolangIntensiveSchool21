@@ -2,16 +2,20 @@ package domain
 
 import (
 	"bytes"
-	"context"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"github.com/dustin/go-humanize"
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/pkg/errors"
 	"log"
 	"os"
 	"strconv"
+)
+
+const (
+	indexName string = "places"
+	batch     int    = 2500
 )
 
 type Place struct {
@@ -63,7 +67,7 @@ func ParseDataFromCsv(path string) ([]Place, error) {
 		}
 
 		data = append(data, Place{
-			ID:      id,
+			ID:      id + 1,
 			Name:    record[1],
 			Address: record[2],
 			Phone:   record[3],
@@ -72,37 +76,76 @@ func ParseDataFromCsv(path string) ([]Place, error) {
 				Lat: lat}})
 	}
 
+	log.Printf("→ Generated %s places", humanize.Comma(int64(len(data))))
 	return data, nil
 }
 
 func InsertDataToElastic(es *elasticsearch.Client, places []Place) error {
+	//var buf bytes.Buffer
+	//for _, place := range places {
+	//	action := fmt.Sprintf(`{ "index" : { "_index" : "places", "_id" : "%d" } }%s`, place.ID+1, "\n")
+	//	if _, err := buf.WriteString(action); err != nil {
+	//		return errors.Wrap(err, "error writing action: "+strconv.Itoa(place.ID))
+	//	}
+	//	if err := json.NewEncoder(&buf).Encode(place); err != nil {
+	//		return errors.Wrap(err, "error encoding document: "+strconv.Itoa(place.ID))
+	//	}
+	//	log.Printf("[ %d place is being processed ]\n", place.ID+1)
+	//}
+	//
+	//req := esapi.BulkRequest{
+	//	Body:    &buf,
+	//	Refresh: "true",
+	//}
+	//
+	//res, err := req.Do(context.Background(), es)
+	//if err != nil {
+	//	return errors.Wrap(err, "error performing bulk request")
+	//}
+	//defer res.Body.Close()
+	//
+	//if res.IsError() {
+	//	return errors.New("error response for bulk request")
+	//}
+
+	fmt.Print("→ Sending batch ")
 	var buf bytes.Buffer
-	for _, place := range places {
-		action := fmt.Sprintf(`{ "index" : { "_index" : "places", "_id" : "%d" } }%s`, place.ID+1, "\n")
-		if _, err := buf.WriteString(action); err != nil {
-			return errors.Wrap(err, "error writing action: "+strconv.Itoa(place.ID))
+	for i, place := range places {
+		meta := []byte(fmt.Sprintf(`{ "index" : { "_id" : "%d" } }%s`, place.ID, "\n"))
+
+		data, err := json.Marshal(place)
+		if err != nil {
+			return errors.Wrap(err, "Cannot encode place "+strconv.Itoa(place.ID))
 		}
-		if err := json.NewEncoder(&buf).Encode(place); err != nil {
-			return errors.Wrap(err, "error encoding document: "+strconv.Itoa(place.ID))
+		data = append(data, "\n"...)
+
+		buf.Grow(len(meta) + len(data))
+		buf.Write(meta)
+		buf.Write(data)
+
+		if (i+1)%batch == 0 || i == len(places)-1 {
+			fmt.Printf("[%d/%d] ", i+1, len(places))
+
+			res, err := es.Bulk(bytes.NewReader(buf.Bytes()), es.Bulk.WithIndex(indexName))
+			if err != nil {
+				return errors.Wrap(err, "failure indexing batch "+strconv.Itoa(place.ID))
+			}
+			if res.IsError() {
+				var raw map[string]interface{}
+				if err := json.NewDecoder(res.Body).Decode(&raw); err != nil {
+					return errors.Wrap(err, "failure to to parse response body")
+				} else {
+					log.Printf("  Error: [%d] %s: %s",
+						res.StatusCode,
+						raw["error"].(map[string]interface{})["type"],
+						raw["error"].(map[string]interface{})["reason"],
+					)
+				}
+			}
+			res.Body.Close()
+			buf.Reset()
 		}
-		log.Printf("[ %d place is being processed ]\n", place.ID+1)
-	}
-
-	req := esapi.BulkRequest{
-		Body:    &buf,
-		Refresh: "true",
-	}
-
-	res, err := req.Do(context.Background(), es)
-	if err != nil {
-		return errors.Wrap(err, "error performing bulk request")
-	}
-	defer res.Body.Close()
-
-	if res.IsError() {
-		return errors.New("error response for bulk request")
 	}
 
 	return nil
-
 }
