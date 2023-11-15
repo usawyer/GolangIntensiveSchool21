@@ -81,33 +81,6 @@ func ParseDataFromCsv(path string) ([]Place, error) {
 }
 
 func InsertDataToElastic(es *elasticsearch.Client, places []Place) error {
-	//var buf bytes.Buffer
-	//for _, place := range places {
-	//	action := fmt.Sprintf(`{ "index" : { "_index" : "places", "_id" : "%d" } }%s`, place.ID+1, "\n")
-	//	if _, err := buf.WriteString(action); err != nil {
-	//		return errors.Wrap(err, "error writing action: "+strconv.Itoa(place.ID))
-	//	}
-	//	if err := json.NewEncoder(&buf).Encode(place); err != nil {
-	//		return errors.Wrap(err, "error encoding document: "+strconv.Itoa(place.ID))
-	//	}
-	//	log.Printf("[ %d place is being processed ]\n", place.ID+1)
-	//}
-	//
-	//req := esapi.BulkRequest{
-	//	Body:    &buf,
-	//	Refresh: "true",
-	//}
-	//
-	//res, err := req.Do(context.Background(), es)
-	//if err != nil {
-	//	return errors.Wrap(err, "error performing bulk request")
-	//}
-	//defer res.Body.Close()
-	//
-	//if res.IsError() {
-	//	return errors.New("error response for bulk request")
-	//}
-
 	fmt.Print("→ Sending batch ")
 	var buf bytes.Buffer
 	for i, place := range places {
