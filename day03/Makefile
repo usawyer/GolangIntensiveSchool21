@@ -4,7 +4,7 @@ PACKAGE=search
 #all: run_ex00 run_ex01 run_ex02
 
 build_ex00:
-	go build -o ${BUILD}/insert ${PACKAGE}/cmd/ex00
+	go build -o ${BUILD}/inserter ${PACKAGE}/cmd/ex00
 
 run_ex00: build_ex00
 	docker-compose up -d
@@ -15,7 +15,7 @@ run_ex00: build_ex00
 	@sleep 2
 	curl -s -XGET "http://localhost:9200/places"
 	@sleep 2
-	${BUILD}/insert
+	${BUILD}/inserter
 	@sleep 5
 	curl -s -XGET "http://localhost:9200/places/_doc/1"
 

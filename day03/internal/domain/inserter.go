@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"log"
 	"os"
+	"search/internal/types"
 	"strconv"
 )
 
@@ -18,21 +19,8 @@ const (
 	batch     int    = 2500
 )
 
-type Place struct {
-	ID       int      `json:"id"`
-	Name     string   `json:"name"`
-	Address  string   `json:"address"`
-	Phone    string   `json:"phone"`
-	Location Location `json:"location"`
-}
-
-type Location struct {
-	Lon float64 `json:"lon"`
-	Lat float64 `json:"lat"`
-}
-
-func ParseDataFromCsv(path string) ([]Place, error) {
-	var data []Place
+func ParseDataFromCsv(path string) ([]types.Place, error) {
+	var data []types.Place
 
 	f, err := os.Open(path)
 	if err != nil {
@@ -66,12 +54,12 @@ func ParseDataFromCsv(path string) ([]Place, error) {
 			continue
 		}
 
-		data = append(data, Place{
+		data = append(data, types.Place{
 			ID:      id + 1,
 			Name:    record[1],
 			Address: record[2],
 			Phone:   record[3],
-			Location: Location{
+			Location: types.Location{
 				Lon: lon,
 				Lat: lat}})
 	}
@@ -80,7 +68,7 @@ func ParseDataFromCsv(path string) ([]Place, error) {
 	return data, nil
 }
 
-func InsertDataToElastic(es *elasticsearch.Client, places []Place) error {
+func InsertDataToElastic(es *elasticsearch.Client, places []types.Place) error {
 	fmt.Print("→ Sending batch ")
 	var buf bytes.Buffer
 	for i, place := range places {
