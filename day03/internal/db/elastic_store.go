@@ -1,10 +1,13 @@
 package db
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"io"
 	"search/internal/types"
+	"strings"
 )
 
 type ElasticStore struct {
@@ -17,6 +20,19 @@ func NewElasticStore() (*ElasticStore, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	settings := `{"index": {"max_result_window": 20000}}`
+	req := esapi.IndicesPutSettingsRequest{
+		Index: []string{"places"},
+		Body:  strings.NewReader(settings),
+	}
+
+	res, err := req.Do(context.Background(), es)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
 	return &ElasticStore{client: es}, nil
 }
 
@@ -28,16 +44,16 @@ func (es *ElasticStore) GetPlaces(limit int, offset int) ([]types.Place, int, er
 		es.client.Search.WithTrackTotalHits(true),
 	)
 
-	if err != nil {
+	if err != nil || res.IsError() {
 		return nil, 0, err
 	}
+
+	defer res.Body.Close()
 
 	bodyBytes, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, 0, err
 	}
-
-	defer res.Body.Close()
 
 	var responses types.Response
 	if err := json.Unmarshal(bodyBytes, &responses); err != nil {
