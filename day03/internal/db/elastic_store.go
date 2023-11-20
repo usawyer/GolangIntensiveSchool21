@@ -69,3 +69,36 @@ func (es *ElasticStore) GetPlaces(limit int, offset int) ([]types.Place, int, er
 
 	return places, totalHits, nil
 }
+
+func (es *ElasticStore) GetClosestPlaces(lat float64, lon float64) ([]types.Place, error) {
+	/// отсортировать и найти
+
+	res, err := es.client.Search(
+		es.client.Search.WithIndex("places"),
+		es.client.Search.WithSize(3),
+		//es.client.Search.WithTrackTotalHits(true),
+	)
+
+	if err != nil || res.IsError() {
+		return nil, err
+	}
+
+	defer res.Body.Close()
+
+	bodyBytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var responses types.Response
+	if err := json.Unmarshal(bodyBytes, &responses); err != nil {
+		return nil, err
+	}
+
+	var places []types.Place
+	for _, response := range responses.Hits.Hits {
+		places = append(places, response.Source)
+	}
+
+	return places, nil
+}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"html/template"
 	"net/http"
+	"net/url"
 	"search/internal/db"
 	"search/internal/types"
 	"strconv"
@@ -126,4 +127,42 @@ func (server *Server) PrepareData(r *http.Request) (Data, CustomError) {
 	}
 
 	return answer, CustomError{}
+}
+
+type JsonClosestResponse struct {
+	Name   string        `json:"name"`
+	Places []types.Place `json:"places"`
+}
+
+func (server *Server) GetClosestPlacesHandler(w http.ResponseWriter, r *http.Request) {
+	u, err := url.Parse(r.URL.String())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	lat, err := strconv.ParseFloat(u.Query().Get("lat"), 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	lon, err := strconv.ParseFloat(u.Query().Get("lon"), 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	places, err := server.store.GetClosestPlaces(lat, lon)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := JsonClosestResponse{
+		Name:   "Recommendation",
+		Places: places,
+	}
+
+	WriteJSON(w, response)
 }
