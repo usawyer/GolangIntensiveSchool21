@@ -23,8 +23,15 @@ build_ex01:
 run_ex01: build_ex01
 	${BUILD}/simple_interface
 
+build_ex02:
+	go build -o ${BUILD}/proper_API ${PACKAGE}/cmd/ex02
+
+run_ex02: build_ex02
+	${BUILD}/proper_API
+
 clean:
 	rm -rf ${BUILD}/inserter
 	rm -rf ${BUILD}/simple_interface
+	rm -rf ${BUILD}/proper_API
 	#curl -XDELETE "http://localhost:9200/places/"
 	#docker stop day03-elasticsearch
