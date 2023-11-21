@@ -71,12 +71,33 @@ func (es *ElasticStore) GetPlaces(limit int, offset int) ([]types.Place, int, er
 }
 
 func (es *ElasticStore) GetClosestPlaces(lat float64, lon float64) ([]types.Place, error) {
-	/// отсортировать и найти
+	query := map[string]interface{}{
+		"sort": []map[string]interface{}{
+			{
+				"_geo_distance": map[string]interface{}{
+					"location": map[string]interface{}{
+						"lat": lat,
+						"lon": lon,
+					},
+					"order":           "asc",
+					"unit":            "km",
+					"mode":            "min",
+					"distance_type":   "arc",
+					"ignore_unmapped": true,
+				},
+			},
+		},
+	}
+
+	queryBytes, err := json.Marshal(query)
+	if err != nil {
+		return nil, err
+	}
 
 	res, err := es.client.Search(
 		es.client.Search.WithIndex("places"),
 		es.client.Search.WithSize(3),
-		//es.client.Search.WithTrackTotalHits(true),
+		es.client.Search.WithBody(strings.NewReader(string(queryBytes))),
 	)
 
 	if err != nil || res.IsError() {
