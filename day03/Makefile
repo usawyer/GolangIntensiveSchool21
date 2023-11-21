@@ -29,9 +29,16 @@ build_ex02:
 run_ex02: build_ex02
 	${BUILD}/proper_API
 
+build_ex03:
+	go build -o ${BUILD}/closest_restaurants ${PACKAGE}/cmd/ex03
+
+run_ex03: build_ex03
+	${BUILD}/closest_restaurants
+
 clean:
 	rm -rf ${BUILD}/inserter
 	rm -rf ${BUILD}/simple_interface
 	rm -rf ${BUILD}/proper_API
+	rm -rf ${BUILD}/closest_restaurants
 	#curl -XDELETE "http://localhost:9200/places/"
 	#docker stop day03-elasticsearch
