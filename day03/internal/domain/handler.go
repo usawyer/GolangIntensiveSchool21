@@ -2,6 +2,7 @@ package domain
 
 import (
 	"encoding/json"
+	"github.com/golang-jwt/jwt"
 	"html/template"
 	"net/http"
 	"net/url"
@@ -165,4 +166,56 @@ func (server *Server) GetClosestPlacesHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	WriteJSON(w, response)
+}
+
+var sampleSecretKey = []byte("SecretYouShouldHide")
+
+type JsonTokenResponse struct {
+	Token string `json:"token"`
+}
+
+func GetTokenHandler(w http.ResponseWriter, r *http.Request) {
+	token, err := generateJWT()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	response := JsonTokenResponse{token}
+	WriteJSON(w, response)
+}
+
+func generateJWT() (string, error) {
+	token := jwt.New(jwt.SigningMethodHS256)
+	tokenString, err := token.SignedString(sampleSecretKey)
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
+}
+
+func VerifyJWT(endpointHandler func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			http.Error(w, "Missing Authorization header", http.StatusUnauthorized)
+			return
+		}
+
+		tokenString := strings.Split(authHeader, " ")
+		if len(tokenString) != 2 || tokenString[0] != "Bearer" {
+			http.Error(w, "Invalid Authorization header format", http.StatusUnauthorized)
+			return
+		}
+
+		token, err := jwt.Parse(tokenString[1], func(token *jwt.Token) (interface{}, error) {
+			return sampleSecretKey, nil
+		})
+
+		if err != nil || !token.Valid {
+			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			return
+		}
+
+		endpointHandler(w, r)
+	}
 }
