@@ -1,9 +1,11 @@
 BUILD=${CURDIR}/build
 PACKAGE=candies
 
+.PHONY: build
+
 build:
 	go build -o ${BUILD}/server ${PACKAGE}/cmd/candies-server
-	#go build -o ${BUILD}/client ${PACKAGE}/cmd/candies-client
+	go build -o ${BUILD}/client ${PACKAGE}/cmd/candies-client
 
 run_ex00: build
 	${BUILD}/server --port 3333
@@ -13,7 +15,8 @@ test_ex00: build
 	curl -XPOST -H "Content-Type: application/json" -d '{"money": 46, "candyType": "YR", "candyCount": 2}' http://127.0.0.1:3333/buy_candy
 
 run_ex01: build
-	${BUILD}/server
+	${BUILD}/server --scheme https --tls-port 3333 \
+	--tls-certificate cert/server/cert.pem --tls-key cert/server/key.pem
 
 test_ex01: build
 	${BUILD}/client -k AA -c 2 -m 50

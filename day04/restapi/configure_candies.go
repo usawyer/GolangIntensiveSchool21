@@ -4,6 +4,7 @@ package restapi
 
 import (
 	"crypto/tls"
+	"fmt"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -14,6 +15,34 @@ import (
 )
 
 //go:generate swagger generate server --target ../../day04 --name Candies --spec ../api/swagger.yml --principal interface{}
+
+func implement(params operations.BuyCandyParams) middleware.Responder {
+	var candies = map[string]int64{"CE": 10, "AA": 15, "NT": 17, "DE": 21, "YR": 23}
+
+	kind := *params.Order.CandyType
+	count := *params.Order.CandyCount
+	money := *params.Order.Money
+	if _, ok := candies[kind]; ok == false {
+		payload := operations.BuyCandyBadRequestBody{
+			Error: "invalid candy type, should be CE/AA/NT/DE/YR",
+		}
+		return operations.NewBuyCandyBadRequest().WithPayload(&payload)
+	}
+	need := candies[kind] * count
+
+	if need <= money {
+		payload := operations.BuyCandyCreatedBody{
+			Change: money - need,
+			Thanks: "Thank you!",
+		}
+		return operations.NewBuyCandyCreated().WithPayload(&payload)
+
+	} else {
+		payload := operations.BuyCandyPaymentRequiredBody{
+			Error: fmt.Sprintf("You need %d more money!", need-money)}
+		return operations.NewBuyCandyPaymentRequired().WithPayload(&payload)
+	}
+}
 
 func configureFlags(api *operations.CandiesAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -37,6 +66,7 @@ func configureAPI(api *operations.CandiesAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	api.BuyCandyHandler = operations.BuyCandyHandlerFunc(implement)
 	if api.BuyCandyHandler == nil {
 		api.BuyCandyHandler = operations.BuyCandyHandlerFunc(func(params operations.BuyCandyParams) middleware.Responder {
 			return middleware.NotImplemented("operation operations.BuyCandy has not yet been implemented")

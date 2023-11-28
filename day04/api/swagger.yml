@@ -24,12 +24,14 @@ paths:
               money:
                 description: amount of money put into vending machine
                 type: integer
+                minimum: 0
               candyType:
                 description: kind of candy
                 type: string
               candyCount:
                 description: number of candy
                 type: integer
+                minimum: 0
       operationId: buyCandy
       responses:
         201:

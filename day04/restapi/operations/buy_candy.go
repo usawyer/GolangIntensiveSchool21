@@ -104,6 +104,7 @@ type BuyCandyBody struct {
 
 	// number of candy
 	// Required: true
+	// Minimum: 0
 	CandyCount *int64 `json:"candyCount"`
 
 	// kind of candy
@@ -112,6 +113,7 @@ type BuyCandyBody struct {
 
 	// amount of money put into vending machine
 	// Required: true
+	// Minimum: 0
 	Money *int64 `json:"money"`
 }
 
@@ -143,6 +145,10 @@ func (o *BuyCandyBody) validateCandyCount(formats strfmt.Registry) error {
 		return err
 	}
 
+	if err := validate.MinimumInt("order"+"."+"candyCount", "body", *o.CandyCount, 0, false); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -158,6 +164,10 @@ func (o *BuyCandyBody) validateCandyType(formats strfmt.Registry) error {
 func (o *BuyCandyBody) validateMoney(formats strfmt.Registry) error {
 
 	if err := validate.Required("order"+"."+"money", "body", o.Money); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumInt("order"+"."+"money", "body", *o.Money, 0, false); err != nil {
 		return err
 	}
 

@@ -135,7 +135,8 @@ func init() {
               "properties": {
                 "candyCount": {
                   "description": "number of candy",
-                  "type": "integer"
+                  "type": "integer",
+                  "minimum": 0
                 },
                 "candyType": {
                   "description": "kind of candy",
@@ -143,7 +144,8 @@ func init() {
                 },
                 "money": {
                   "description": "amount of money put into vending machine",
-                  "type": "integer"
+                  "type": "integer",
+                  "minimum": 0
                 }
               }
             }
