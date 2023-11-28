@@ -20,6 +20,8 @@ run_ex01: build
 
 test_ex01: build
 	${BUILD}/client -k AA -c 2 -m 50
+	${BUILD}/client -k DE -c 1 -m 21
+	${BUILD}/client -k YR -c 4 -m 13
 
 run_ex02: build
 	${BUILD}/server

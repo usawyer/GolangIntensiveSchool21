@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"candies/restapi/operations"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
@@ -39,15 +40,10 @@ func validateInput() (Request, error) {
 	return order, nil
 }
 
-func main() {
-	order, err := validateInput()
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func makeRequest(order Request) ([]byte, *http.Response, error) {
 	data, err := json.Marshal(order)
 	if err != nil {
-		log.Fatal(err)
+		return nil, nil, err
 	}
 
 	caCert, _ := os.ReadFile("cert/minica.pem")
@@ -66,13 +62,55 @@ func main() {
 
 	r, err := client.Post(url, "application/json", bytes.NewBuffer(data))
 	if err != nil {
-		log.Fatal(err)
+		return nil, nil, err
+	}
+	defer r.Body.Close()
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		return nil, nil, err
 	}
 
-	defer r.Body.Close()
-	content, err := io.ReadAll(r.Body)
+	return body, r, nil
+}
+
+func printAnswer(body []byte, r *http.Response) {
+	if r.StatusCode == 201 {
+		var success operations.BuyCandyCreatedBody
+		err := json.Unmarshal(body, &success)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%s You change is %d!\n", success.Thanks, success.Change)
+	} else if r.StatusCode == 402 {
+		var fail operations.BuyCandyPaymentRequiredBody
+		err := json.Unmarshal(body, &fail)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Print(fail.Error)
+	} else if r.StatusCode == 400 {
+		var fail operations.BuyCandyBadRequestBody
+		err := json.Unmarshal(body, &fail)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Print(fail.Error)
+	} else {
+		fmt.Print(string(body))
+	}
+}
+
+func main() {
+	order, err := validateInput()
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Print(string(content))
+
+	body, r, err := makeRequest(order)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	printAnswer(body, r)
 }
