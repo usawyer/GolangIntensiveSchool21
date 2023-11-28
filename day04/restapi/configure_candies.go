@@ -22,7 +22,7 @@ func implement(params operations.BuyCandyParams) middleware.Responder {
 	kind := *params.Order.CandyType
 	count := *params.Order.CandyCount
 	money := *params.Order.Money
-	if _, ok := candies[kind]; ok == false {
+	if _, ok := candies[kind]; !ok {
 		payload := operations.BuyCandyBadRequestBody{
 			Error: "invalid candy type, should be CE/AA/NT/DE/YR",
 		}

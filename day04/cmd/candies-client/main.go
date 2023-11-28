@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/pkg/errors"
 	"io"
 	"log"
 	"net/http"
@@ -21,16 +22,28 @@ type Request struct {
 
 const url = "https://127.0.0.1:3333/buy_candy"
 
-func main() {
+func validateInput() (Request, error) {
 	var order Request
 	flag.Int64Var(&order.CandyCount, "c", 0, "count of candy to buy")
 	flag.StringVar(&order.CandyType, "k", "", "two-letter abbreviation for the candy type CE/AA/NT/DE/YR")
 	flag.Int64Var(&order.Money, "m", 0, "amount of money you \"gave to machine\"")
 	flag.Parse()
 
-	//validation
-	//var candies = map[string]int64{"CE": 10, "AA": 15, "NT": 17, "DE": 21, "YR": 23}
-	//fmt.Println(order)
+	var candies = map[string]int64{"CE": 10, "AA": 15, "NT": 17, "DE": 21, "YR": 23}
+	if _, ok := candies[order.CandyType]; !ok {
+		return Request{}, errors.New("invalid candy type, should be CE/AA/NT/DE/YR")
+	}
+	if order.CandyCount < 0 || order.Money < 0 {
+		return Request{}, errors.New("invalid value")
+	}
+	return order, nil
+}
+
+func main() {
+	order, err := validateInput()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	data, err := json.Marshal(order)
 	if err != nil {
@@ -61,5 +74,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(string(content))
+	fmt.Print(string(content))
 }
