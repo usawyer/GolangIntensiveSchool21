@@ -2,7 +2,7 @@
 
 package restapi
 
-//#include "../third_party/cow.h"
+//#include "cow.h"
 import "C"
 
 import (
