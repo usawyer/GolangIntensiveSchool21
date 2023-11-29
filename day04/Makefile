@@ -28,9 +28,6 @@ run_ex02: build
     --tls-certificate cert/server/cert.pem --tls-key cert/server/key.pem --cow
 
 test_ex02: build
-#	curl -s --key cert/server/key.pem --cert cert/server/cert.pem --cacert cert/minica.pem \
-#	-XPOST -H "Content-Type: application/json" -d '{"candyType": "NT", "candyCount": 2, "money": 34}' \
-#	"https://server:3333/buy_candy"
 	curl -s --key cert/server/key.pem --cert cert/server/cert.pem --cacert cert/minica.pem \
     -XPOST -H "Content-Type: application/json" -d '{"candyType": "NT", "candyCount": 2, "money": 34}' \
     "https://127.0.0.1:3333/buy_candy"
