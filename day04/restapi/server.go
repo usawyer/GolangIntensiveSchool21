@@ -75,6 +75,7 @@ type Server struct {
 	SocketPath    flags.Filename `long:"socket-path" description:"the unix socket to listen on" default:"/var/run/candies.sock"`
 	domainSocketL net.Listener
 
+	CowSupport   bool          `long:"cow" description:"cow thanks"`
 	Host         string        `long:"host" description:"the IP to listen on" default:"localhost" env:"HOST"`
 	Port         int           `long:"port" description:"the port to listen on for insecure connections, defaults to a random value" env:"PORT"`
 	ListenLimit  int           `long:"listen-limit" description:"limit the number of outstanding requests"`

@@ -24,12 +24,16 @@ test_ex01: build
 	${BUILD}/client -k YR -c 4 -m 13
 
 run_ex02: build
-	${BUILD}/server
+	${BUILD}/server --scheme https --tls-port 3333 \
+    --tls-certificate cert/server/cert.pem --tls-key cert/server/key.pem --cow
 
 test_ex02: build
-	curl -s --key cert/client/key.pem --cert cert/client/cert.pem --cacert cert/minica.pem \
-	-XPOST -H "Content-Type: application/json" -d '{"candyType": "NT", "candyCount": 2, "money": 34}' \
-	"https://candy.tld:3333/buy_candy"
+#	curl -s --key cert/server/key.pem --cert cert/server/cert.pem --cacert cert/minica.pem \
+#	-XPOST -H "Content-Type: application/json" -d '{"candyType": "NT", "candyCount": 2, "money": 34}' \
+#	"https://server:3333/buy_candy"
+	curl -s --key cert/server/key.pem --cert cert/server/cert.pem --cacert cert/minica.pem \
+    -XPOST -H "Content-Type: application/json" -d '{"candyType": "NT", "candyCount": 2, "money": 34}' \
+    "https://127.0.0.1:3333/buy_candy"
 
 linter:
 	#go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest

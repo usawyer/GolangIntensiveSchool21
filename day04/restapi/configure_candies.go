@@ -2,10 +2,14 @@
 
 package restapi
 
+//#include "../third_party/cow.h"
+import "C"
+
 import (
 	"crypto/tls"
 	"fmt"
 	"net/http"
+	"unsafe"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
@@ -16,12 +20,14 @@ import (
 
 //go:generate swagger generate server --target ../../day04 --name Candies --spec ../api/swagger.yml --principal interface{}
 
-func implement(params operations.BuyCandyParams) middleware.Responder {
-	var candies = map[string]int64{"CE": 10, "AA": 15, "NT": 17, "DE": 21, "YR": 23}
+var CowFlag bool
 
+func implement(params operations.BuyCandyParams) middleware.Responder {
 	kind := *params.Order.CandyType
 	count := *params.Order.CandyCount
 	money := *params.Order.Money
+
+	var candies = map[string]int64{"CE": 10, "AA": 15, "NT": 17, "DE": 21, "YR": 23}
 	if _, ok := candies[kind]; !ok {
 		payload := operations.BuyCandyBadRequestBody{
 			Error: "invalid candy type, should be CE/AA/NT/DE/YR",
@@ -31,9 +37,18 @@ func implement(params operations.BuyCandyParams) middleware.Responder {
 	need := candies[kind] * count
 
 	if need <= money {
+		phrase := "Thank you!"
+
+		if CowFlag {
+			cPhrase := C.CString(phrase)
+			defer C.free(unsafe.Pointer(cPhrase))
+			result := C.ask_cow(cPhrase)
+			defer C.free(unsafe.Pointer(result))
+			phrase = C.GoString(result)
+		}
 		payload := operations.BuyCandyCreatedBody{
 			Change: money - need,
-			Thanks: "Thank you!",
+			Thanks: phrase,
 		}
 		return operations.NewBuyCandyCreated().WithPayload(&payload)
 
