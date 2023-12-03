@@ -1,9 +1,17 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+option go_package = "./transmitter";
 
 message Request {
+}
+
+message Response {
   string session_id = 1;
   double frequency = 2;
   google.protobuf.Timestamp timestamp = 3;
+}
+
+service Transmitter {
+  rpc Transmit(Request) returns (stream Response) {};
 }
