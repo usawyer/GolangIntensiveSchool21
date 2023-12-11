@@ -8,6 +8,7 @@ package pb
 
 import (
 	context "context"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -26,7 +27,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransmitterClient interface {
-	Transmit(ctx context.Context, in *Request, opts ...grpc.CallOption) (Transmitter_TransmitClient, error)
+	Transmit(ctx context.Context, in *TransmitterRequest, opts ...grpc.CallOption) (Transmitter_TransmitClient, error)
 }
 
 type transmitterClient struct {
@@ -37,7 +38,7 @@ func NewTransmitterClient(cc grpc.ClientConnInterface) TransmitterClient {
 	return &transmitterClient{cc}
 }
 
-func (c *transmitterClient) Transmit(ctx context.Context, in *Request, opts ...grpc.CallOption) (Transmitter_TransmitClient, error) {
+func (c *transmitterClient) Transmit(ctx context.Context, in *TransmitterRequest, opts ...grpc.CallOption) (Transmitter_TransmitClient, error) {
 	stream, err := c.cc.NewStream(ctx, &Transmitter_ServiceDesc.Streams[0], Transmitter_Transmit_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
@@ -53,7 +54,7 @@ func (c *transmitterClient) Transmit(ctx context.Context, in *Request, opts ...g
 }
 
 type Transmitter_TransmitClient interface {
-	Recv() (*Response, error)
+	Recv() (*TransmitterResponse, error)
 	grpc.ClientStream
 }
 
@@ -61,8 +62,8 @@ type transmitterTransmitClient struct {
 	grpc.ClientStream
 }
 
-func (x *transmitterTransmitClient) Recv() (*Response, error) {
-	m := new(Response)
+func (x *transmitterTransmitClient) Recv() (*TransmitterResponse, error) {
+	m := new(TransmitterResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -73,7 +74,7 @@ func (x *transmitterTransmitClient) Recv() (*Response, error) {
 // All implementations must embed UnimplementedTransmitterServer
 // for forward compatibility
 type TransmitterServer interface {
-	Transmit(*Request, Transmitter_TransmitServer) error
+	Transmit(*TransmitterRequest, Transmitter_TransmitServer) error
 	mustEmbedUnimplementedTransmitterServer()
 }
 
@@ -81,7 +82,7 @@ type TransmitterServer interface {
 type UnimplementedTransmitterServer struct {
 }
 
-func (UnimplementedTransmitterServer) Transmit(*Request, Transmitter_TransmitServer) error {
+func (UnimplementedTransmitterServer) Transmit(*TransmitterRequest, Transmitter_TransmitServer) error {
 	return status.Errorf(codes.Unimplemented, "method Transmit not implemented")
 }
 func (UnimplementedTransmitterServer) mustEmbedUnimplementedTransmitterServer() {}
@@ -98,7 +99,7 @@ func RegisterTransmitterServer(s grpc.ServiceRegistrar, srv TransmitterServer) {
 }
 
 func _Transmitter_Transmit_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(Request)
+	m := new(TransmitterRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
@@ -106,7 +107,7 @@ func _Transmitter_Transmit_Handler(srv interface{}, stream grpc.ServerStream) er
 }
 
 type Transmitter_TransmitServer interface {
-	Send(*Response) error
+	Send(*TransmitterResponse) error
 	grpc.ServerStream
 }
 
@@ -114,7 +115,7 @@ type transmitterTransmitServer struct {
 	grpc.ServerStream
 }
 
-func (x *transmitterTransmitServer) Send(m *Response) error {
+func (x *transmitterTransmitServer) Send(m *TransmitterResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 

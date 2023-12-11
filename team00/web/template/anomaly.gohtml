@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Anomaly</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+<h5>Total: {{ .Count }}</h5>
+<ul>
+    <li>
+        <div>SessionId = {{ .Session.SessionId}}</div>
+        <div>ServMean = {{ .Session.ServMean }}</div>
+        <div>ServStd = {{ .Session.ServStd }}</div>
+        <div>ClientMean = {{ .Session.ClientMean }}</div>
+        <div>ClientStd = {{ .Session.ClientStd }}</div>
+        <div>ClientK = {{ .Session.ClientK }}</div>
+        <div>Status = {{ .Session.Status }}</div>
+    </li>
+<h5> Anomaly</h5>
+    {{ range .Anomalies }}
+        <li>
+            <div>{{ .Frequency }}</div>
+            <div>{{ .Timestamp }}</div>
+        </li>
+    {{end}}
+</ul>
+</body>
+</html>

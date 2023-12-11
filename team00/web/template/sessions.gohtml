@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sessions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+
+        h5 {
+            color: #333;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        a {
+            text-decoration: none;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+<h5>Total: {{ .Count }}</h5>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>ServMean</th>
+        <th>ServStd</th>
+        <th>ClientMean</th>
+        <th>ClientStd</th>
+        <th>ClientK</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{ range .Sessions }}
+        <tr>
+            <td><a href="/anomaly?id={{ .ID }}">{{ .SessionId }}</a></td>
+            <td>{{ .ServMean }}</td>
+            <td>{{ .ServStd }}</td>
+            <td>{{ .ClientMean }}</td>
+            <td>{{ .ClientStd }}</td>
+            <td>{{ .ClientK }}</td>
+            <td>{{ .Status }}</td>
+        </tr>
+    {{ end }}
+    </tbody>
+</table>
+</body>
+</html>

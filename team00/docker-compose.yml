@@ -1,0 +1,94 @@
+version: '3.7'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: cmd/server/Dockerfile
+    container_name: srv
+    env_file:
+      - env/pg.env
+    environment:
+      - PORT=8888
+      - HOST=0.0.0.0
+      - K_TIME=5
+  db:
+    image: postgres:15.5-alpine3.18
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=team00
+#    ports:
+#      - '5432:5432'
+
+  handler:
+    build:
+      context: .
+      dockerfile: cmd/handlers/Dockerfile
+    image: team00/handlers
+    restart: always
+    env_file:
+      - env/pg.env
+    environment:
+      - PORT=80
+      - HOST=0.0.0.0
+    ports:
+      - '80:80'
+    depends_on:
+      - server
+      - db
+
+  client1:
+    build:
+      context: .
+      dockerfile: cmd/client/Dockerfile
+    image: team00/client
+    restart: always
+    env_file:
+      - env/pg.env
+    environment:
+      - PORT=8888
+      - HOST=server
+      - K_ANOMALY=3.0
+    depends_on:
+      - server
+      - db
+
+  client2:
+    image: team00/client
+    restart: always
+    env_file:
+      - env/pg.env
+    environment:
+      - PORT=8888
+      - HOST=server
+      - K_ANOMALY=3.0
+    depends_on:
+      - server
+      - db
+
+  client3:
+    image: team00/client
+    restart: always
+    env_file:
+      - env/pg.env
+    environment:
+      - PORT=8888
+      - HOST=server
+      - K_ANOMALY=3.0
+    depends_on:
+      - server
+      - db
+
+  client4:
+    image: team00/client
+    restart: always
+    env_file:
+      - env/pg.env
+    environment:
+      - PORT=8888
+      - HOST=server
+      - K_ANOMALY=3.0
+    depends_on:
+      - server
+      - db
