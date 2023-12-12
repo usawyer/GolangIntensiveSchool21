@@ -37,7 +37,7 @@ func levelOrderTraversal(n *tree.TreeNode) []bool {
 	return result
 }
 
-func unrollGarland(t *tree.Tree) []bool {
+func UnrollGarland(t *tree.Tree) []bool {
 	if t.Root == nil {
 		return []bool{}
 	}

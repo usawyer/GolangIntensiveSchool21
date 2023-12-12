@@ -1,12 +1,13 @@
-package ex01
+package test
 
 import (
+	"day05/cmd/ex01"
 	tree "day05/internal/binary_tree"
 	"reflect"
 	"testing"
 )
 
-func TestCase00(t *testing.T) {
+func TestTreeEasy(t *testing.T) {
 	treeTest := &tree.Tree{}
 
 	treeTest.Insert(true)
@@ -20,14 +21,14 @@ func TestCase00(t *testing.T) {
 	treeTest.Print()
 
 	expected := []bool{true, true, false, true, true, false, true}
-	actual := unrollGarland(treeTest)
+	actual := ex01.UnrollGarland(treeTest)
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
 	}
 }
 
-func TestCase01(t *testing.T) {
+func TestTreeEasy01(t *testing.T) {
 	treeTest := &tree.Tree{}
 
 	treeTest.Insert(false)
@@ -44,20 +45,20 @@ func TestCase01(t *testing.T) {
 	treeTest.Print()
 
 	expected := []bool{false, false, true, true, true, true, false, true, false, true}
-	actual := unrollGarland(treeTest)
+	actual := ex01.UnrollGarland(treeTest)
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
 	}
 }
 
-func TestCase02(t *testing.T) {
+func TestTreeEmpty(t *testing.T) {
 	treeTest := &tree.Tree{}
 
 	treeTest.Print()
 
 	expected := make([]bool, 0)
-	actual := unrollGarland(treeTest)
+	actual := ex01.UnrollGarland(treeTest)
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)

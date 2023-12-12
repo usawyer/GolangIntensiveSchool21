@@ -1,11 +1,12 @@
-package ex00
+package test
 
 import (
+	"day05/cmd/ex00"
 	tree "day05/internal/binary_tree"
 	"testing"
 )
 
-func TestCase00(t *testing.T) {
+func TestTreeBalanced(t *testing.T) {
 	treeTest := &tree.Tree{}
 
 	treeTest.Insert(false)
@@ -17,14 +18,14 @@ func TestCase00(t *testing.T) {
 	treeTest.Print()
 
 	expected := true
-	actual := areToysBalanced(treeTest)
+	actual := ex00.AreToysBalanced(treeTest)
 
 	if expected != actual {
 		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
 	}
 }
 
-func TestCase01(t *testing.T) {
+func TestTreeBalanced01(t *testing.T) {
 	treeTest := &tree.Tree{}
 
 	treeTest.Insert(true)
@@ -38,14 +39,14 @@ func TestCase01(t *testing.T) {
 	treeTest.Print()
 
 	expected := true
-	actual := areToysBalanced(treeTest)
+	actual := ex00.AreToysBalanced(treeTest)
 
 	if expected != actual {
 		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
 	}
 }
 
-func TestCase02(t *testing.T) {
+func TestTreeUnbalanced(t *testing.T) {
 	treeTest := &tree.Tree{}
 
 	treeTest.Insert(true)
@@ -55,14 +56,14 @@ func TestCase02(t *testing.T) {
 	treeTest.Print()
 
 	expected := false
-	actual := areToysBalanced(treeTest)
+	actual := ex00.AreToysBalanced(treeTest)
 
 	if expected != actual {
 		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
 	}
 }
 
-func TestCase03(t *testing.T) {
+func TestTreeUnbalanced01(t *testing.T) {
 	treeTest := &tree.Tree{}
 
 	treeTest.Insert(false)
@@ -74,7 +75,18 @@ func TestCase03(t *testing.T) {
 	treeTest.Print()
 
 	expected := false
-	actual := areToysBalanced(treeTest)
+	actual := ex00.AreToysBalanced(treeTest)
+
+	if expected != actual {
+		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
+	}
+}
+
+func TestTreeBalancedEmpty(t *testing.T) {
+	treeTest := &tree.Tree{}
+
+	expected := false
+	actual := ex00.AreToysBalanced(treeTest)
 
 	if expected != actual {
 		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
