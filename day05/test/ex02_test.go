@@ -1,14 +1,13 @@
 package test
 
 import (
-	"day05/cmd/ex02"
-	hp "day05/internal/heap"
+	hp "day05/pkg/heap"
 	"reflect"
 	"testing"
 )
 
 func TestHeapEasy(t *testing.T) {
-	unsortedPresents := []hp.Present{
+	unsortedPresents := hp.PresentHeap{
 		{Value: 5, Size: 1},
 		{Value: 4, Size: 5},
 		{Value: 3, Size: 1},
@@ -16,7 +15,7 @@ func TestHeapEasy(t *testing.T) {
 	}
 
 	expected := []hp.Present{{Value: 5, Size: 1}, {Value: 5, Size: 2}}
-	actual, _ := ex02.GetNCoolestPresents(unsortedPresents, 2)
+	actual, _ := unsortedPresents.GetNCoolestPresents(2)
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
@@ -24,7 +23,7 @@ func TestHeapEasy(t *testing.T) {
 }
 
 func TestHeapIncorrectN(t *testing.T) {
-	unsortedPresents := []hp.Present{
+	unsortedPresents := hp.PresentHeap{
 		{Value: 5, Size: 1},
 		{Value: 4, Size: 5},
 		{Value: 3, Size: 1},
@@ -32,7 +31,7 @@ func TestHeapIncorrectN(t *testing.T) {
 	}
 
 	expectedError := "invalid number of n"
-	actual, err := ex02.GetNCoolestPresents(unsortedPresents, 6)
+	actual, err := unsortedPresents.GetNCoolestPresents(6)
 
 	if err == nil {
 		t.Error("Expected an error but got none.")

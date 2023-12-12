@@ -9,6 +9,22 @@ type Tree struct {
 	Root *TreeNode
 }
 
+func (t *Tree) AreToysBalanced() bool {
+	if t.Root == nil {
+		return false
+	}
+
+	return t.Root.Left.countToys() == t.Root.Right.countToys()
+}
+
+func (t *Tree) UnrollGarland() []bool {
+	if t.Root == nil {
+		return []bool{}
+	}
+
+	return t.Root.levelOrderTraversal()
+}
+
 func (t *Tree) Insert(value bool) {
 	if t.Root == nil {
 		t.Root = &TreeNode{HasToy: value}
@@ -35,6 +51,50 @@ type TreeNode struct {
 	HasToy bool
 	Left   *TreeNode
 	Right  *TreeNode
+}
+
+func (n *TreeNode) countToys() int {
+	if n == nil {
+		return 0
+	}
+	if !n.HasToy {
+		return n.Left.countToys() + n.Right.countToys()
+	} else {
+		return n.Left.countToys() + n.Right.countToys() + 1
+	}
+}
+
+func (n *TreeNode) levelOrderTraversal() []bool {
+	var result []bool
+	var queue []*TreeNode
+	queue = append(queue, n)
+	level := 0
+
+	for len(queue) > 0 {
+		size := len(queue)
+		values := make([]bool, size)
+
+		for i := 0; i < size; i++ {
+			node := queue[0]
+			queue = queue[1:]
+
+			if level%2 != 0 {
+				values[i] = node.HasToy
+			} else {
+				values[size-i-1] = node.HasToy
+			}
+
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+		}
+		result = append(result, values...)
+		level++
+	}
+	return result
 }
 
 func (n *TreeNode) InsertLeft(value bool) {

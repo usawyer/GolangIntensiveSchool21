@@ -1,19 +1,18 @@
 package test
 
 import (
-	"day05/cmd/ex03"
-	hp "day05/internal/heap"
+	hp "day05/pkg/heap"
 	"testing"
 )
 
 func TestKnapsackEasy(t *testing.T) {
-	items := []hp.Present{
+	items := hp.PresentHeap{
 		{Value: 5, Size: 3},
 		{Value: 3, Size: 2},
 		{Value: 4, Size: 1},
 	}
 
-	indices := ex03.GrabPresents(items, 5)
+	indices := items.GrabPresents(5)
 	value := 0
 	for _, i := range indices {
 		value += i.Value
@@ -25,13 +24,13 @@ func TestKnapsackEasy(t *testing.T) {
 }
 
 func TestKnapsackZeroCapacity(t *testing.T) {
-	items := []hp.Present{
+	items := hp.PresentHeap{
 		{Value: 5, Size: 3},
 		{Value: 3, Size: 2},
 		{Value: 4, Size: 1},
 	}
 
-	indices := ex03.GrabPresents(items, 0)
+	indices := items.GrabPresents(0)
 	value := 0
 	for _, i := range indices {
 		value += i.Value
@@ -43,9 +42,9 @@ func TestKnapsackZeroCapacity(t *testing.T) {
 }
 
 func TestKnapsackNoItem(t *testing.T) {
-	items := []hp.Present{}
+	items := hp.PresentHeap{}
 
-	indices := ex03.GrabPresents(items, 5)
+	indices := items.GrabPresents(5)
 	value := 0
 	for _, i := range indices {
 		value += i.Value

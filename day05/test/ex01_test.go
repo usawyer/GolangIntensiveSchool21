@@ -1,8 +1,7 @@
 package test
 
 import (
-	"day05/cmd/ex01"
-	tree "day05/internal/binary_tree"
+	tree "day05/pkg/binary_tree"
 	"reflect"
 	"testing"
 )
@@ -21,7 +20,7 @@ func TestTreeEasy(t *testing.T) {
 	treeTest.Print()
 
 	expected := []bool{true, true, false, true, true, false, true}
-	actual := ex01.UnrollGarland(treeTest)
+	actual := treeTest.UnrollGarland()
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
@@ -45,7 +44,7 @@ func TestTreeEasy01(t *testing.T) {
 	treeTest.Print()
 
 	expected := []bool{false, false, true, true, true, true, false, true, false, true}
-	actual := ex01.UnrollGarland(treeTest)
+	actual := treeTest.UnrollGarland()
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
@@ -58,7 +57,7 @@ func TestTreeEmpty(t *testing.T) {
 	treeTest.Print()
 
 	expected := make([]bool, 0)
-	actual := ex01.UnrollGarland(treeTest)
+	actual := treeTest.UnrollGarland()
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
