@@ -2,13 +2,12 @@ package test
 
 import (
 	tree "day05/pkg/binary_tree"
-	"reflect"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestTreeEasy(t *testing.T) {
 	treeTest := &tree.Tree{}
-
 	treeTest.Insert(true)
 	treeTest.Root.InsertLeft(true)
 	treeTest.Root.InsertRight(false)
@@ -17,19 +16,15 @@ func TestTreeEasy(t *testing.T) {
 	treeTest.Root.Right.InsertLeft(true)
 	treeTest.Root.Right.InsertRight(true)
 
-	treeTest.Print()
+	// Uncomment the method to display the tree
+	//treeTest.Print()
 
 	expected := []bool{true, true, false, true, true, false, true}
-	actual := treeTest.UnrollGarland()
-
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
-	}
+	assert.Equal(t, expected, treeTest.UnrollGarland())
 }
 
 func TestTreeEasy01(t *testing.T) {
 	treeTest := &tree.Tree{}
-
 	treeTest.Insert(false)
 	treeTest.Root.InsertLeft(false)
 	treeTest.Root.InsertRight(true)
@@ -41,25 +36,18 @@ func TestTreeEasy01(t *testing.T) {
 	treeTest.Root.Left.Right.InsertRight(false)
 	treeTest.Root.Left.Right.Left.InsertRight(true)
 
-	treeTest.Print()
+	// Uncomment the method to display the tree
+	//treeTest.Print()
 
 	expected := []bool{false, false, true, true, true, true, false, true, false, true}
-	actual := treeTest.UnrollGarland()
-
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
-	}
+	assert.Equal(t, expected, treeTest.UnrollGarland())
 }
 
 func TestTreeEmpty(t *testing.T) {
 	treeTest := &tree.Tree{}
-
-	treeTest.Print()
+	// Uncomment the method to display the tree
+	//treeTest.Print()
 
 	expected := make([]bool, 0)
-	actual := treeTest.UnrollGarland()
-
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
-	}
+	assert.Equal(t, expected, treeTest.UnrollGarland())
 }

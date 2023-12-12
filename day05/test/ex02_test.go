@@ -2,7 +2,7 @@ package test
 
 import (
 	hp "day05/pkg/heap"
-	"reflect"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -16,10 +16,7 @@ func TestHeapEasy(t *testing.T) {
 
 	expected := []hp.Present{{Value: 5, Size: 1}, {Value: 5, Size: 2}}
 	actual, _ := unsortedPresents.GetNCoolestPresents(2)
-
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("Result was incorrect, got: %v, want: %v.", actual, expected)
-	}
+	assert.Equal(t, expected, actual)
 }
 
 func TestHeapIncorrectN(t *testing.T) {
@@ -33,18 +30,7 @@ func TestHeapIncorrectN(t *testing.T) {
 	expectedError := "invalid number of n"
 	actual, err := unsortedPresents.GetNCoolestPresents(6)
 
-	if err == nil {
-		t.Error("Expected an error but got none.")
-		return
-	}
-
-	if err.Error() != expectedError {
-		t.Errorf("Error message was incorrect, got: %v, want: %v.", err.Error(), expectedError)
-		return
-	}
-
-	if len(actual) > 0 {
-		t.Errorf("Expected an empty result, but got: %v.", actual)
-		return
-	}
+	assert.Error(t, err, "Expected an error but got none.")
+	assert.EqualError(t, err, expectedError, "Error message was incorrect.")
+	assert.Empty(t, actual, "Expected an empty result, but got: %v.", actual)
 }
