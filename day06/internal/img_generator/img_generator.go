@@ -40,7 +40,7 @@ func (i Image) GenerateAmazingLogo() error {
 	i.drawNumbers(15, 140, 30)
 	i.addLabel(260, 18, "bfile")
 
-	err := i.save("amazing_logo.png")
+	err := i.save("build/amazing_logo.png")
 	if err != nil {
 		return err
 	}
