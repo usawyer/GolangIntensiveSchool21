@@ -6,7 +6,7 @@ build_ex00:
 
 run_ex00: build_ex00
 	docker-compose up -d
-	@sleep 10
+	@sleep 20
 	curl -XPUT "http://localhost:9200/places"
 	@sleep 2
 	curl -XPUT 'http://localhost:9200/places/_mapping' -H "Content-Type: application/json" -d @api/schema.json

@@ -9,7 +9,7 @@ func main() {
 	image := img.NewImage(300, 300)
 	err := image.GenerateAmazingLogo()
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 
 	log.Println("Amazing logo has been generated successfully!")
