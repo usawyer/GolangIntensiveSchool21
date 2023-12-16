@@ -1,13 +1,16 @@
-img {max-width: 100%;
+img {
+    max-width: 100%;
     height: auto;
     float: left;
     margin-right: 5%;
 }
+
 .text-container {
     display: flex;
     font-size: 4vw;
 }
-button {
+
+.button1 {
     padding: 5px 25px;
     text-align: center;
     display: inline-block;
@@ -18,12 +21,52 @@ button {
     top: 10px;
     right: 10px;
 }
-.button1 {
+
+.button2 {
+    padding: 5px 25px;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.button {
     background-color: white;
     color: black;
     border: 2px solid #00ffae;
 }
-.button1:hover {
+
+.button:hover {
     background-color: #00ffae;
     color: white;
 }
+
+.login-form{
+    width: 382px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.login-input {
+    margin-bottom: 10px;
+    padding: 8px 30px;
+}
+
+#login{
+    width: 300px;
+    height: 30px;
+    border-radius: 3px;
+    padding-left: 8px;
+}
+
+#password{
+    width: 300px;
+    height: 30px;
+    border-radius: 3px;
+    padding-left: 8px;
+}
+
