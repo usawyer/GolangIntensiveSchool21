@@ -52,8 +52,7 @@ func TestMinCoinsNegative(t *testing.T) {
 	case <-timeout:
 		t.Fatal("Test didn't finish in time")
 	case actual := <-done:
-		sort.Ints(actual)
-		assert.Equal(t, []int{1, 1, 3}, actual)
+		assert.Equal(t, []int{}, actual)
 	}
 }
 
@@ -81,7 +80,7 @@ func TestMinCoinsImpossible(t *testing.T) {
 	sort.Ints(actual)
 	assert.Equal(t, []int{}, actual)
 
-	actual = internal.MinCoins(8, coins)
+	actual = internal.MinCoins(11, coins)
 	sort.Ints(actual)
 	assert.Equal(t, []int{}, actual)
 }
@@ -89,6 +88,11 @@ func TestMinCoinsImpossible(t *testing.T) {
 func TestMinCoinsOptimal(t *testing.T) {
 	coins := []int{1, 2, 3, 10}
 	actual := internal.MinCoins(6, coins)
+	sort.Ints(actual)
+	assert.Equal(t, []int{3, 3}, actual)
+
+	coins = []int{4, 1, 3, 7}
+	actual = internal.MinCoins(6, coins)
 	sort.Ints(actual)
 	assert.Equal(t, []int{3, 3}, actual)
 }

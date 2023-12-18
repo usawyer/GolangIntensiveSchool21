@@ -53,7 +53,7 @@ func TestMinCoins2Negative(t *testing.T) {
 		t.Fatal("Test didn't finish in time")
 	case actual := <-done:
 		sort.Ints(actual)
-		assert.Equal(t, []int{1, 1, 3}, actual)
+		assert.Equal(t, []int{}, actual)
 	}
 }
 
@@ -81,7 +81,7 @@ func TestMinCoins2Impossible(t *testing.T) {
 	sort.Ints(actual)
 	assert.Equal(t, []int{}, actual)
 
-	actual = internal.MinCoins2(8, coins)
+	actual = internal.MinCoins2(11, coins)
 	sort.Ints(actual)
 	assert.Equal(t, []int{}, actual)
 }
@@ -89,6 +89,11 @@ func TestMinCoins2Impossible(t *testing.T) {
 func TestMinCoins2Optimal(t *testing.T) {
 	coins := []int{1, 2, 3, 10}
 	actual := internal.MinCoins2(6, coins)
+	sort.Ints(actual)
+	assert.Equal(t, []int{3, 3}, actual)
+
+	coins = []int{4, 1, 3, 7}
+	actual = internal.MinCoins2(6, coins)
 	sort.Ints(actual)
 	assert.Equal(t, []int{3, 3}, actual)
 }
