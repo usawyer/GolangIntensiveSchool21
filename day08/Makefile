@@ -13,5 +13,9 @@ ex02:
 	go build -o ${BUILD}/window ${PACKAGE}/cmd/ex02
 	${BUILD}/window
 
+linter:
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	golangci-lint run
+
 clean:
 	rm -rf ${BUILD}

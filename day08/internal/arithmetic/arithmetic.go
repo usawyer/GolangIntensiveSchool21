@@ -11,7 +11,7 @@ func GetElement(arr []int, idx int) (int, error) {
 		return 0, errors.New("index is negative")
 	} else if idx >= len(arr) {
 		return 0, errors.New("index " + strconv.Itoa(idx) + " is out of range")
-	} else if arr == nil || len(arr) == 0 {
+	} else if len(arr) == 0 {
 		return 0, errors.New("incorrect array")
 	}
 
