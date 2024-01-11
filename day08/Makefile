@@ -3,12 +3,15 @@ PACKAGE=day08
 
 .PHONY: test
 
-ex01:
-	go build -o ${BUILD}/plant_printer ${PACKAGE}/cmd/ex01
-	${BUILD}/plant_printer
+ex00:
+	go test -v ./test/ex00/...
 
-test:
-	go test -v ./test/...
+ex01:
+	go test -v ./test/ex01/...
+
+ex02:
+	go build -o ${BUILD}/window ${PACKAGE}/cmd/ex02
+	${BUILD}/window
 
 clean:
 	rm -rf ${BUILD}

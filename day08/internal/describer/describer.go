@@ -1,4 +1,4 @@
-package main
+package describer
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ type AnotherUnknownPlant struct {
 	Height      int `unit:"inches"`
 }
 
-func describePlant(plant interface{}) {
+func DescribePlant(plant interface{}) {
 	v := reflect.ValueOf(plant)
 	t := v.Type()
 
@@ -46,24 +46,4 @@ func printField(f reflect.Value, t reflect.StructField) {
 	} else {
 		fmt.Printf("%s(%s=%s):%v", t.Name, strings.Split(string(t.Tag), ":")[0], tag, f)
 	}
-}
-
-func main() {
-	plant := UnknownPlant{
-		FlowerType: "Lavender",
-		LeafType:   "oblong",
-		Color:      230,
-	}
-
-	plant2 := AnotherUnknownPlant{
-		FlowerColor: 10,
-		LeafType:    "lanceolate",
-		Height:      15,
-	}
-
-	describePlant(plant)
-	fmt.Println()
-	describePlant(plant2)
-	fmt.Println()
-	describePlant(12)
 }
