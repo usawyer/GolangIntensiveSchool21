@@ -1,12 +1,20 @@
 package main
 
 import (
+	connector_db "day06/internal/db_conncetor"
+	"day06/models"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"gorm.io/gorm"
 	"html/template"
 	"log"
 	"net/http"
 )
+
+type Data struct {
+	Db *gorm.DB
+}
 
 func mainPageHandler(w http.ResponseWriter, r *http.Request) {
 	redirect(w, r)
@@ -70,9 +78,34 @@ func newRouter() *mux.Router {
 	return r
 }
 
+func (data *Data) newArticle(i int) {
+
+	data.Db.Create(&models.Articles{
+		Tittle:  uuid.New().String(),
+		Content: uuid.New().String(),
+	})
+
+}
+
 func main() {
+	db, err := connector_db.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.AutoMigrate(&models.Articles{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	data := &Data{Db: db}
+
+	for i := 0; i < 3; i++ {
+		data.newArticle(i)
+	}
+
 	r := newRouter()
-	err := http.ListenAndServe("localhost:8888", r)
+	err = http.ListenAndServe("localhost:8888", r)
 	if err != nil {
 		log.Fatal(err)
 	}
