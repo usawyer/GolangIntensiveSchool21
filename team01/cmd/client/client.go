@@ -8,6 +8,10 @@ import (
 )
 
 func main() {
+	handler()
+}
+
+func handler() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		scanner.Scan()
@@ -25,5 +29,4 @@ func main() {
 			fmt.Println("Unknown operation")
 		}
 	}
-
 }
