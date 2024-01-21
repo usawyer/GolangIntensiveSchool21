@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+message HeartbeatRequest {
+  string host = 1;
+  int32 port = 2;
+  int32 replication_factor = 3;
+}
+
+message HeartbeatResponse {
+  repeated string known_nodes = 1;
+  int32 replication_factor = 2;
+  string error = 3;
+}
+
+message SetDocumentRequest {
+  string key = 1;
+  string document = 2;
+}
+
+message SetDocumentResponse {
+  int32 replicas_created = 1;
+  string error = 2;
+}
+
+message GetDocumentRequest {
+  string key = 1;
+}
+
+message GetDocumentResponse {
+  string document = 1;
+  string error = 2;
+}
+
+message DeleteDocumentRequest {
+  string key = 1;
+}
+
+message DeleteDocumentResponse {
+  int32 replicas_deleted = 1;
+  string error = 2;
+}
+
+service Warehouse {
+  rpc Heartbeat (HeartbeatRequest) returns (HeartbeatResponse) {};
+  rpc SetDocument (SetDocumentRequest) returns (SetDocumentResponse) {};
+  rpc GetDocument (GetDocumentRequest) returns (GetDocumentResponse) {};
+  rpc DeleteDocument (DeleteDocumentRequest) returns (DeleteDocumentResponse) {};
+}
