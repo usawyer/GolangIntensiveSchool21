@@ -33,7 +33,7 @@ test_ex02: build
     "https://127.0.0.1:3333/buy_candy"
 
 linter:
-	#go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	golangci-lint run
 
 clean:
