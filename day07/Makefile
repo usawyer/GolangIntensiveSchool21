@@ -1,5 +1,3 @@
-.PHONY: test
-
 ex00:
 	go test -v ./test/ex00/...
 
@@ -14,7 +12,7 @@ run_godoc:
 
 ex02:
 	@mkdir -p docs
-	wget --mirror --convert-links --adjust-extension --page-requisites --no-parent --no-host-directories -P docs/ http://localhost:8080/pkg/day07/internal
+	-wget --mirror --convert-links --adjust-extension --page-requisites --no-parent --no-host-directories -P docs/ http://localhost:8080/pkg/day07/internal
 	zip -r docs/docs.zip docs
 	rm -rf docs/lib docs/pkg
 
