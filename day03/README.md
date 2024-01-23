@@ -1,30 +1,66 @@
-## Ex00
-Utilize Go Elasticsearch bindings to create an index, define mappings, 
-and upload a dataset of Moscow restaurants into Elasticsearch. Implement 
-a Store interface to abstract database operations for fetching paginated 
-restaurant entries. Run an HTTP server on port 8888 to display a simple 
-HTML UI providing a paginated list of restaurant names, addresses, and 
-phones.
+# Restaurant Search Application
+This Go-based application provides a simple interface and API for searching and 
+interacting with a dataset of restaurants in Moscow, Russia. The application is
+designed to work with Elasticsearch as the underlying database, utilizing the Go 
+Elasticsearch bindings.
 
-## Ex01
-Develop an HTML UI for the restaurant database, abstracting the database 
-behind a Store interface. The interface should support pagination, and 
-the HTML UI should render a list of restaurants along with pagination 
-links. Ensure proper error handling for invalid page values.
+### Setup
+To set up the application:
+```
+make run_ex00 
+```
 
-## Ex02
-Implement another HTTP handler that responds with JSON data for the restaurant 
-database. This API should also support pagination, and the JSON response should 
-include information about the total number of entries, the current page, and 
-links for pagination. Properly handle errors when an invalid page is specified.
+1. Run the provided docker-compose.yml file to start Elasticsearch service.
+2. Initialize Database and Upload Dataset: The Makefile automatically performs the necessary 
+steps to initialize the Elasticsearch index, create mappings, and upload the provided 
+dataset of restaurants.  
+`${BUILD}/inserter`  
+This command runs the inserter program to upload the dataset into Elasticsearch.
 
-## Ex03
-Implement functionality to search for the three closest restaurants based on 
-given coordinates. Configure sorting for the query, and the API should respond 
-with JSON containing information about the recommended restaurants.
+### Loading Data
+The dataset contains information about restaurants, including ID, Name, Address, 
+Phone, Longitude, and Latitude. 
 
-## Ex04
-Implement a JWT-based authentication system. Create an API endpoint to generate 
-a token and protect the /api/recommend endpoint with JWT middleware. The middleware 
-should check the validity of the token, allowing access only when a valid JWT is 
-provided.
+`curl -s -XGET "http://localhost:9200/places/_doc/1"`
+
+![Loading data Screenshot](./docs/images/00_01.png)
+
+### Simplest Interface
+The application provides a simple HTML UI for the database, rendering a page with 
+a list of restaurant names, addresses, and phones. Pagination is implemented, 
+allowing users to navigate through the list. The HTTP application runs on port 8888, 
+and the UI is accessible via the browser.
+
+`http://127.0.0.1:8888/?page=2`
+
+![Simple interface Screenshot](./docs/images/01_01.png)
+
+### Proper API
+The application implements an API that responds with Content-Type: application/json, 
+providing a JSON version of the restaurant list. The API supports pagination, and in 
+case of an invalid 'page' parameter, it's corresponding JSON error message.
+
+`http://127.0.0.1:8888/api/places?page=3`
+
+![JSON Screenshot](./docs/images/02_01.png)
+
+### Closest Restaurants
+The main functionality is searching for the three closest restaurants based on the 
+user's coordinates. The API endpoint /api/recommend takes latitude and longitude 
+parameters and returns JSON with the three closest restaurants.
+
+`http://127.0.0.1:8888/api/recommend?lat=55.674&lon=37.666`
+
+![Closest restaurants Screenshot](./docs/images/03_01.png)
+
+### JWT Authentication
+Authentication is implemented using JWT. The /api/get_token endpoint generates a token, 
+and the /api/recommend endpoint is protected with a JWT middleware. Access to the API 
+requires a valid JWT token provided in the Authorization: Bearer <token> header.
+
+`http://127.0.0.1:8888/api/get_token`
+
+![JWT Screenshot](./docs/images/04_01.png)
+
+![JWT Closest restaurants Screenshot](./docs/images/04_02.png)
+
