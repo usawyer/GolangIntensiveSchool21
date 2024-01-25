@@ -1,14 +1,15 @@
 ## Ex00
-Review and test the provided minCoins function for issues. Write tests 
-exposing problems and create a corrected minCoins2 handling duplicates, 
-unsorted denominations, and an empty list.
+Reviewed and fixed the existing `minCoins` function, which had a bug in handling duplicate denominations, 
+non-sorted input slices and an empty list. Implemented test cases in test/ex00/minCoins_test.go files to 
+demonstrate the incorrect behavior of the original code and created a new function,`minCoins2`, to handle 
+error cases correctly.
 
 ## Ex01
-Identify the top 10 CPU-consuming functions using Go's tools. Save the 
-list in top10.txt. Benchmark minCoins and minCoins2. Optimize minCoins2 
-as needed, and create minCoins2Optimized if applicable.
+Utilized Go's built-in tools to profile the execution of the minCoins2 function and identify the top 10 
+functions consuming the most CPU time. Additionally, created benchmark tests to compare the performance 
+of the minCoins2 function.
 
 ## Ex02
-Document differences between minCoins and minCoins2 in code comments. Use 
-a documentation tool to generate HTML documentation. Include reproduction 
-directions. Submit HTML docs and static content as docs.zip.
+Enhanced code comments to describe the differences between different versions of the minCoins function. 
+Utilized a documentation tool to generate HTML documentation based on the comments. Submitted compressed 
+HTML documentation (docs.zip) for accessibility.
