@@ -1,11 +1,23 @@
 version: '3.7'
 services:
+#  server:
+#    build:
+#      context: .
+#      dockerfile: cmd/Dockerfile
+#    container_name: srv
+#    env_file:
+#      - env/pg.env
+#    environment:
+#      - PORT=3000
+#      - HOST=0.0.0.0
+#    ports:
+#      - '3000:3000'
   db:
     image: postgres:15.5-alpine3.18
     restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=day06
+    env_file:
+      - env/pg.env
     ports:
-        - '5432:5432'
+      - '5432:5432'
+#    volumes:
+#      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
